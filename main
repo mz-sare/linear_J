@@ -1,0 +1,54 @@
+import java.util.Scanner;
+
+public class UnrecognizableLinearEquationSolver {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter the coefficients of the linear equation ax + b = 0");
+        System.out.print("a: ");
+        double a = scanner.nextDouble();
+        System.out.print("b: ");
+        double b = scanner.nextDouble();
+        scanner.close();
+
+        double[][] matrix = {
+            { a, b },
+            { 1, 0 }
+        };
+
+        int rowCount = matrix.length;
+        int colCount = matrix[0].length;
+
+        for (int row = 0; row < rowCount - 1; row++) {
+            if (matrix[row][row] == 0) {
+                for (int i = row + 1; i < rowCount; i++) {
+                    if (matrix[i][row] != 0) {
+                        for (int j = 0; j < colCount; j++) {
+                            double temp = matrix[i][j];
+                            matrix[i][j] = matrix[row][j];
+                            matrix[row][j] = temp;
+                        }
+                        break;
+                    }
+                }
+            }
+
+            for (int i = row + 1; i < rowCount; i++) {
+                double factor = matrix[i][row] / matrix[row][row];
+                for (int j = row; j < colCount; j++) {
+                    matrix[i][j] -= factor * matrix[row][j];
+                }
+            }
+        }
+
+        double[] solution = new double[rowCount - 1];
+        for (int row = rowCount - 2; row >= 0; row--) {
+            double sum = 0;
+            for (int col = row + 1; col < colCount - 1; col++) {
+                sum += matrix[row][col] * solution[col];
+            }
+            solution[row] = (matrix[row][colCount - 1] - sum) / matrix[row][row];
+        }
+
+        System.out.println("Solution: x = " + solution[0]);
+    }
+}
